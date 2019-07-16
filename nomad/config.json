@@ -1,0 +1,20 @@
+{
+  "datacenter": "dc1",
+  "data_dir": "/opt/consul",
+  "log_level": "DEBUG",
+  "node_name": "nomad-livelinux-01",
+  "server": false,
+  "encrypt": "CuuinW0dg6VekHzyN68XoQ==",
+  "domain": "livelinux",
+  "addresses": {
+    "dns": "127.0.0.1",
+    "https": "0.0.0.0",
+    "grpc": "127.0.0.1",
+    "http": "127.0.0.1"
+  },
+  "bind_addr": "local_addr",
+  "start_join": ["10.0.0.10"],
+  "ports": {
+    "dns": 53
+  }
+}
