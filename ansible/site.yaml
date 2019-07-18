@@ -1,0 +1,72 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+    - name: Install packages
+      apt:
+        name: "{{ packages }}"
+      vars:
+        packages:
+          - nginx
+          - unzip
+
+    - name: Install consul
+      unarchive:
+        src: "https://releases.hashicorp.com/consul/{{consul_version}}/consul_{{consul_version}}_linux_amd64.zip"
+        dest: /usr/local/bin
+        remote_src: yes
+      vars:
+        consul_version: 1.5.2
+    - name: Create consul server config dirs
+      file:
+        path: /etc/consul.d/bootstrap
+        state: directory
+    - name: Copy consul configs
+      copy:
+        src: files/consul/config.json
+        dest: /etc/consul.d/bootstrap/config.json
+      notify:
+        - consul_restart
+    - name: Copy consul unit file
+      copy:
+        src: files/consul/consul.service
+        dest: /etc/systemd/system/consul.service
+      notify:
+        - consul_restart
+        - daemon_reload
+
+    - name: Delete nginx default configs
+      file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+    - name: Create hepasswd files
+      htpasswd:
+        path: /etc/nginx/.htpasswd
+        name: name
+        password: password
+    - name: Copy nginx configs
+      copy:
+        src: files/consul/consul-auth.conf
+        dest: /etc/nginx/sites-enabled/consul-auth.conf
+      notify:
+        - nginx_reload
+
+  handlers:
+    - name: daemon_reload
+      systemd:
+        daemon_reload: yes
+
+    - name: consul_restart
+      systemd:
+        name: consul.service
+        state: restarted
+
+    - name: nomad_restart
+      systemd:
+        name: nomad.service
+        state: restarted
+
+    - name: nginx_reload
+      systemd:
+        name: nginx.service
+        state: reloaded

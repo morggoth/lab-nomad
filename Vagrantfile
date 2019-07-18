@@ -12,28 +12,28 @@ Vagrant.configure('2') do |config|
       vb.cpus = '1'
     end
     subconfig.vm.provision 'shell', inline: <<-SHELL
-      set -x
-      apt install -y \
-          unzip \
-          nginx
-      # Install consul server
-      wget https://releases.hashicorp.com/consul/1.5.2/consul_1.5.2_linux_amd64.zip
-      unzip consul_1.5.2_linux_amd64.zip
-      mv consul /usr/local/bin
-      mkdir -p /etc/consul.d/bootstrap
-      cp /vagrant/consul/config.json /etc/consul.d/bootstrap/config.json
-      cp /vagrant/consul/consul.service /etc/systemd/system/consul.service
-      systemctl daemon-reload
-      systemctl enable consul
-      systemctl start consul
-      systemctl status consul
+      # set -x
+      # apt install -y \
+      #     unzip \
+      #     nginx
+      # # Install consul server
+      # wget https://releases.hashicorp.com/consul/1.5.2/consul_1.5.2_linux_amd64.zip
+      # unzip consul_1.5.2_linux_amd64.zip
+      # mv consul /usr/local/bin
+      # mkdir -p /etc/consul.d/bootstrap
+      # cp /vagrant/consul/config.json /etc/consul.d/bootstrap/config.json
+      # cp /vagrant/consul/consul.service /etc/systemd/system/consul.service
+      # systemctl daemon-reload
+      # systemctl enable consul
+      # systemctl start consul
+      # systemctl status consul
 
-      # Install NGINX
-      # consul:consul
-      cp /vagrant/consul/htpasswd /etc/nginx/.htpasswd
-      cp /vagrant/consul/consul-auth.conf /etc/nginx/sites-enabled/consul-auth.conf
-      rm -rf /etc/nginx/sites-enabled/default
-      systemctl reload nginx
+      # # Install NGINX
+      # # consul:consul
+      # cp /vagrant/consul/htpasswd /etc/nginx/.htpasswd
+      # cp /vagrant/consul/consul-auth.conf /etc/nginx/sites-enabled/consul-auth.conf
+      # rm -rf /etc/nginx/sites-enabled/default
+      # systemctl reload nginx
     SHELL
   end
   (1..NODE_COUNT).each do |i|
@@ -47,14 +47,14 @@ Vagrant.configure('2') do |config|
         vb.cpus = '1'
       end
       subconfig.vm.provision 'shell', inline: <<-SHELL
-        set -x
-        apt install -y \
-            unzip \
-            nginx
-        # install consul agent
-        wget https://releases.hashicorp.com/consul/1.5.2/consul_1.5.2_linux_amd64.zip
-        unzip consul_1.5.2_linux_amd64.zip
-        mv consul /usr/local/bin
+        # set -x
+        # apt install -y \
+        #     unzip \
+        #     nginx
+        # # install consul agent
+        # wget https://releases.hashicorp.com/consul/1.5.2/consul_1.5.2_linux_amd64.zip
+        # unzip consul_1.5.2_linux_amd64.zip
+        # mv consul /usr/local/bin
         mkdir -p /etc/consul.d/client
         cp /vagrant/nomad/config.json /etc/consul.d/client/config.json
         sed -i "s/local_addr/10.0.0.#{i + 10}/" /etc/consul.d/client/config.json
